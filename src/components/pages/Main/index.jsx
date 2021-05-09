@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Button } from 'antd'
 import PubSub from 'pubsub-js'
+import axios from 'axios'
 import Choice1 from '../../Choice1'
 import IntegerStep from '../../IntegerStep';
 import Blank from '../../Blank';
@@ -24,7 +25,7 @@ export default class Main extends Component {
     choice1 = ['是', '否'];
     choice2 = ['1-10单', '10-50单', '50-100单', '100单以上'];
 
-    datas = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1];
+    datas = [0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0];
 
     componentDidMount() {
         this.token = PubSub.subscribe("datas", (_msg, stateObj) => {
@@ -38,14 +39,10 @@ export default class Main extends Component {
     }
 
     handleClick = () => {
-        this.datas.forEach(function (data, index) {
-            if (data === -1 && index !== 10) {
-                alert(`incomplete item: ${index + 1}`);
-                return;
-            } else {
-                console.log("commit to the server");
-            }
-        });
+        axios.get(`http://localhost:3000/submit?q=${this.datas}`).then(
+            response => { console.log("submit: ", response); },
+            error => { alert(error); }
+        );
     }
 
     render() {
